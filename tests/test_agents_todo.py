@@ -1,5 +1,10 @@
 from multi_agent_research_lab.agents import SupervisorAgent
-from multi_agent_research_lab.core.schemas import ResearchQuery, SourceDocument
+from multi_agent_research_lab.core.schemas import (
+    AgentName,
+    AgentResult,
+    ResearchQuery,
+    SourceDocument,
+)
 from multi_agent_research_lab.core.state import ResearchState
 
 
@@ -30,10 +35,20 @@ def test_supervisor_routes_to_writer_after_analysis() -> None:
     assert result.route_history[-1] == "writer"
 
 
-def test_supervisor_stops_after_final_answer() -> None:
+def test_supervisor_routes_to_critic_after_final_answer() -> None:
     state = ResearchState(
         request=ResearchQuery(query="Explain multi-agent systems"),
         final_answer="Final answer",
+    )
+    result = SupervisorAgent().run(state)
+    assert result.route_history[-1] == "critic"
+
+
+def test_supervisor_stops_after_critic_review() -> None:
+    state = ResearchState(
+        request=ResearchQuery(query="Explain multi-agent systems"),
+        final_answer="Final answer",
+        agent_results=[AgentResult(agent=AgentName.CRITIC, content="Critic review")],
     )
     result = SupervisorAgent().run(state)
     assert result.route_history[-1] == "done"

@@ -70,8 +70,10 @@ class WriterAgent(BaseAgent):
         return (
             "You are the Writer agent in a multi-agent research workflow. Write a clear, "
             "natural answer for technical learners using only the provided analysis and "
-            "sources. Preserve citation IDs exactly. Do not claim synthetic benchmark evidence "
-            "is a real publication."
+            "sources. Preserve citation IDs exactly, such as [T01-SYN-A] or [A01]. Every "
+            "factual claim bullet or paragraph must include at least one citation ID beside "
+            "the claim. Do not put citations only in a final sources section. Do not invent "
+            "citation IDs. Do not claim synthetic benchmark evidence is a real publication."
         )
 
     def _user_prompt(self, state: ResearchState) -> str:
@@ -89,7 +91,8 @@ class WriterAgent(BaseAgent):
                 "\n".join(sources),
                 (
                     "Write the final answer with: direct answer, key trade-offs, when to use "
-                    "single-agent, when to use multi-agent, risks, and a short conclusion."
+                    "single-agent, when to use multi-agent, risks, and a short conclusion. "
+                    "Attach source IDs like [T01-SYN-A] to each factual claim."
                 ),
             ]
         )

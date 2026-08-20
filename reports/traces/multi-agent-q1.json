@@ -4,6 +4,7 @@
     "researcher",
     "analyst",
     "writer",
+    "critic",
     "done"
   ],
   "trace": [
@@ -16,6 +17,7 @@
         "has_research_notes": false,
         "has_analysis_notes": false,
         "has_final_answer": false,
+        "has_critic_review": false,
         "errors": 0
       }
     },
@@ -41,6 +43,7 @@
         "has_research_notes": true,
         "has_analysis_notes": false,
         "has_final_answer": false,
+        "has_critic_review": false,
         "errors": 0
       }
     },
@@ -50,7 +53,7 @@
         "source_count": 5,
         "llm_used": true,
         "input_tokens": 1447,
-        "output_tokens": 555
+        "output_tokens": 657
       }
     },
     {
@@ -62,6 +65,7 @@
         "has_research_notes": true,
         "has_analysis_notes": true,
         "has_final_answer": false,
+        "has_critic_review": false,
         "errors": 0
       }
     },
@@ -70,19 +74,41 @@
       "payload": {
         "citation_count": 5,
         "llm_used": true,
-        "input_tokens": 1304,
-        "output_tokens": 422
+        "input_tokens": 1470,
+        "output_tokens": 560
+      }
+    },
+    {
+      "name": "supervisor_route",
+      "payload": {
+        "route": "critic",
+        "iteration": 4,
+        "has_sources": true,
+        "has_research_notes": true,
+        "has_analysis_notes": true,
+        "has_final_answer": true,
+        "has_critic_review": false,
+        "errors": 0
+      }
+    },
+    {
+      "name": "critic_complete",
+      "payload": {
+        "passed": true,
+        "issue_count": 0,
+        "citation_coverage": 0.8125
       }
     },
     {
       "name": "supervisor_route",
       "payload": {
         "route": "done",
-        "iteration": 4,
+        "iteration": 5,
         "has_sources": true,
         "has_research_notes": true,
         "has_analysis_notes": true,
         "has_final_answer": true,
+        "has_critic_review": true,
         "errors": 0
       }
     }

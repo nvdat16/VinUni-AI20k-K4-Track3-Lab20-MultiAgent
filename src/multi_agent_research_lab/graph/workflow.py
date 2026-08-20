@@ -2,6 +2,7 @@
 
 from multi_agent_research_lab.agents import (
     AnalystAgent,
+    CriticAgent,
     ResearcherAgent,
     SupervisorAgent,
     WriterAgent,
@@ -29,6 +30,7 @@ class MultiAgentWorkflow:
             "researcher": ResearcherAgent(),
             "analyst": AnalystAgent(),
             "writer": WriterAgent(),
+            "critic": CriticAgent(),
         }
 
     def run(self, state: ResearchState) -> ResearchState:
