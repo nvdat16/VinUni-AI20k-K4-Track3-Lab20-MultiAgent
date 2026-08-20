@@ -20,3 +20,10 @@
 - Check whether citations actually support the claims they appear beside.
 - Compare answer usefulness manually with the peer-review rubric.
 - Inspect trace events for retries, fallbacks, and route history.
+
+
+## Failure Mode and Fix
+
+- Failure mode: The Writer agent may produce fluent claims without source IDs, causing low citation coverage and making it hard to verify whether each claim is grounded in retrieved evidence.
+
+- Fix: The Writer prompt now requires every factual claim to include citation IDs, and the Writer post-processes claim lines to append a known citation when the LLM omits one. The Critic agent then checks citation coverage, unknown citations, and whether synthetic evidence is clearly labeled.
