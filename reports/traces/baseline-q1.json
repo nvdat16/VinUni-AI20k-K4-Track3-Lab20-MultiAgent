@@ -1,0 +1,15 @@
+{
+  "query": "Compare single-agent and multi-agent workflows",
+  "route_history": [],
+  "trace": [
+    {
+      "name": "baseline_llm_complete",
+      "payload": {
+        "model": "gpt-4o-mini",
+        "input_tokens": 49,
+        "output_tokens": 397
+      }
+    }
+  ],
+  "errors": []
+}

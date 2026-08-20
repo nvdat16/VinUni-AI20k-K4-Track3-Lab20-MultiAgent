@@ -4,13 +4,12 @@ from multi_agent_research_lab.core.schemas import BenchmarkMetrics
 
 
 def render_markdown_report(metrics: list[BenchmarkMetrics]) -> str:
-    """Render benchmark metrics to markdown.
-
-    TODO(student): Add richer analysis, examples, screenshots, and trace links.
-    """
+    """Render benchmark metrics to markdown."""
 
     lines = [
         "# Benchmark Report",
+        "",
+        "## Summary",
         "",
         "| Run | Latency (s) | Cost (USD) | Quality | Citation cov. | Failure rate | Notes |",
         "|---|---:|---:|---:|---:|---:|---|",
@@ -24,4 +23,22 @@ def render_markdown_report(metrics: list[BenchmarkMetrics]) -> str:
             f"| {item.run_name} | {item.latency_seconds:.2f} | {cost} | {quality} "
             f"| {citation} | {failure} | {item.notes} |"
         )
+    lines.extend(
+        [
+            "",
+            "## Measurement Notes",
+            "",
+            "- Latency is wall-clock runtime for each runner/query pair.",
+            "- Cost is a rough token-based estimate when model pricing is configured in code.",
+            "- Quality is a proxy score for lab smoke testing; replace it with peer review.",
+            "- Citation coverage counts answer lines that include bracketed source IDs.",
+            "- Failure rate is 100% when a run records errors, otherwise 0%.",
+            "",
+            "## Follow-up Review",
+            "",
+            "- Check whether citations actually support the claims they appear beside.",
+            "- Compare answer usefulness manually with the peer-review rubric.",
+            "- Inspect trace events for retries, fallbacks, and route history.",
+        ]
+    )
     return "\n".join(lines) + "\n"

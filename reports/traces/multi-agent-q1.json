@@ -1,0 +1,91 @@
+{
+  "query": "Compare single-agent and multi-agent workflows",
+  "route_history": [
+    "researcher",
+    "analyst",
+    "writer",
+    "done"
+  ],
+  "trace": [
+    {
+      "name": "supervisor_route",
+      "payload": {
+        "route": "researcher",
+        "iteration": 1,
+        "has_sources": false,
+        "has_research_notes": false,
+        "has_analysis_notes": false,
+        "has_final_answer": false,
+        "errors": 0
+      }
+    },
+    {
+      "name": "researcher_complete",
+      "payload": {
+        "source_count": 5,
+        "citations": [
+          "T01-SYN-A",
+          "T01-SYN-B",
+          "T01-SYN-C",
+          "T10-SYN-A",
+          "T16-SYN-A"
+        ]
+      }
+    },
+    {
+      "name": "supervisor_route",
+      "payload": {
+        "route": "analyst",
+        "iteration": 2,
+        "has_sources": true,
+        "has_research_notes": true,
+        "has_analysis_notes": false,
+        "has_final_answer": false,
+        "errors": 0
+      }
+    },
+    {
+      "name": "analyst_complete",
+      "payload": {
+        "source_count": 5,
+        "llm_used": true,
+        "input_tokens": 1447,
+        "output_tokens": 555
+      }
+    },
+    {
+      "name": "supervisor_route",
+      "payload": {
+        "route": "writer",
+        "iteration": 3,
+        "has_sources": true,
+        "has_research_notes": true,
+        "has_analysis_notes": true,
+        "has_final_answer": false,
+        "errors": 0
+      }
+    },
+    {
+      "name": "writer_complete",
+      "payload": {
+        "citation_count": 5,
+        "llm_used": true,
+        "input_tokens": 1304,
+        "output_tokens": 422
+      }
+    },
+    {
+      "name": "supervisor_route",
+      "payload": {
+        "route": "done",
+        "iteration": 4,
+        "has_sources": true,
+        "has_research_notes": true,
+        "has_analysis_notes": true,
+        "has_final_answer": true,
+        "errors": 0
+      }
+    }
+  ],
+  "errors": []
+}
