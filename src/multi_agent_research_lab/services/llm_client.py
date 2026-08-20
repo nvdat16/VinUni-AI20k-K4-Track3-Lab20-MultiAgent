@@ -10,6 +10,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from multi_agent_research_lab.core.config import get_settings
 from multi_agent_research_lab.core.errors import AgentExecutionError
+from multi_agent_research_lab.observability.tracing import configure_langsmith_tracing
 
 
 @dataclass(frozen=True)
@@ -43,6 +44,7 @@ class LLMClient:
             ) from exc
 
         client = OpenAI(api_key=self.settings.openai_api_key, timeout=self.settings.timeout_seconds)
+        client = self._wrap_for_langsmith(client)
         response = self._create_completion(client, system_prompt, user_prompt)
         content = response.choices[0].message.content or ""
         usage = response.usage
@@ -71,3 +73,15 @@ class LLMClient:
             )
         except Exception as exc:
             raise AgentExecutionError(f"LLM completion failed: {exc}") from exc
+
+    def _wrap_for_langsmith(self, client: Any) -> Any:
+        """Wrap OpenAI client so LangSmith records child LLM runs for monitoring."""
+
+        if not configure_langsmith_tracing():
+            return client
+
+        try:
+            from langsmith.wrappers import wrap_openai
+        except ImportError:
+            return client
+        return wrap_openai(client)
