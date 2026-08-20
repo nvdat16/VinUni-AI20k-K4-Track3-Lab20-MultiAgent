@@ -51,3 +51,22 @@ def test_analyst_and_writer_use_injected_llm_client() -> None:
     state = WriterAgent(llm_client=FakeLLMClient("LLM final answer")).run(state)
     assert state.final_answer == "LLM final answer"
     assert state.agent_results[-1].metadata["llm_used"] is True
+
+
+def test_writer_repairs_uncited_claim_lines() -> None:
+    state = ResearchState(request=ResearchQuery(query="Compare single-agent and multi-agent"))
+    state = ResearcherAgent().run(state)
+    state.analysis_notes = "Analysis notes"
+
+    writer = WriterAgent(
+        llm_client=FakeLLMClient(
+            "This factual claim has enough words but no citation.\n"
+            "This claim already has a citation [T01-SYN-B]."
+        )
+    )
+    state = writer.run(state)
+
+    assert "This factual claim has enough words but no citation. [T01-SYN-A]" in (
+        state.final_answer or ""
+    )
+    assert state.agent_results[-1].metadata["citation_repairs"] == 1

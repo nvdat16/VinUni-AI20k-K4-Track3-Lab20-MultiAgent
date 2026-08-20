@@ -4,8 +4,8 @@
 
 | Run | Latency (s) | Cost (USD) | Quality | Citation cov. | Failure rate | Notes |
 |---|---:|---:|---:|---:|---:|---|
-| baseline-q1 | 7.46 | 0.0002 | 5.5 | 0% | 0% | routes=n/a; sources=0; tokens=49/372 |
-| multi-agent-q1 | 14.89 | 0.0012 | 10.0 | 81% | 0% | routes=researcher,analyst,writer,critic,done; sources=5; tokens=2917/1217 |
+| baseline-q1 | 7.50 | 0.0002 | 5.5 | 0% | 0% | routes=n/a; sources=0; tokens=49/388 |
+| multi-agent-q1 | 16.23 | 0.0012 | 10.0 | 100% | 0% | routes=researcher,analyst,writer,critic,done; sources=5; tokens=2891/1248 |
 
 ## Measurement Notes
 

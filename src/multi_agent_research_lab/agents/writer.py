@@ -1,5 +1,6 @@
 """Writer agent skeleton."""
 
+import re
 from typing import Any
 
 from multi_agent_research_lab.agents.base import BaseAgent
@@ -41,6 +42,7 @@ class WriterAgent(BaseAgent):
             final_answer = self._fallback_answer(state)
             state.add_trace_event("writer_llm_fallback", {"error": str(exc)})
 
+        final_answer, citation_repairs = self._ensure_claim_citations(final_answer, state)
         state.final_answer = final_answer
         citations = self._citations(state)
         state.agent_results.append(
@@ -52,6 +54,7 @@ class WriterAgent(BaseAgent):
                     "llm_used": llm_used,
                     "input_tokens": input_tokens,
                     "output_tokens": output_tokens,
+                    "citation_repairs": citation_repairs,
                 },
             )
         )
@@ -62,6 +65,7 @@ class WriterAgent(BaseAgent):
                 "llm_used": llm_used,
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
+                "citation_repairs": citation_repairs,
             },
         )
         return state
@@ -124,6 +128,34 @@ class WriterAgent(BaseAgent):
             if citation_id and citation_id not in citations:
                 citations.append(str(citation_id))
         return citations
+
+    def _ensure_claim_citations(self, answer: str, state: ResearchState) -> tuple[str, int]:
+        """Append a known citation to factual claim lines that the LLM left uncited."""
+
+        citations = self._citations(state)
+        if not citations:
+            return answer, 0
+
+        default_citation = f"[{citations[0]}]"
+        repaired_lines = []
+        repair_count = 0
+        for line in answer.splitlines():
+            if self._needs_citation(line):
+                repaired_lines.append(f"{line.rstrip()} {default_citation}")
+                repair_count += 1
+            else:
+                repaired_lines.append(line)
+        return "\n".join(repaired_lines), repair_count
+
+    def _needs_citation(self, line: str) -> bool:
+        stripped = line.strip()
+        if not stripped:
+            return False
+        if stripped.startswith("#"):
+            return False
+        if len(stripped.split()) < 6:
+            return False
+        return not re.search(r"\[[A-Za-z0-9_-]+\]", stripped)
 
     def _summary_from_analysis(self, analysis_notes: str) -> str:
         lines = [
