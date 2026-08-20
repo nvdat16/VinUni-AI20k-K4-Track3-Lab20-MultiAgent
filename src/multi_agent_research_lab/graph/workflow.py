@@ -1,6 +1,13 @@
 """LangGraph workflow skeleton."""
 
-from multi_agent_research_lab.core.errors import StudentTodoError
+from multi_agent_research_lab.agents import (
+    AnalystAgent,
+    ResearcherAgent,
+    SupervisorAgent,
+    WriterAgent,
+)
+from multi_agent_research_lab.agents.base import BaseAgent
+from multi_agent_research_lab.core.errors import AgentExecutionError, StudentTodoError
 from multi_agent_research_lab.core.state import ResearchState
 
 
@@ -10,19 +17,37 @@ class MultiAgentWorkflow:
     Keep orchestration here; keep agent internals in `agents/`.
     """
 
-    def build(self) -> object:
-        """Create a LangGraph graph.
+    def build(self) -> dict[str, BaseAgent]:
+        """Create the agent registry used by the workflow runner.
 
-        TODO(student): Implement nodes, edges, conditional routing, and stop condition.
-        Suggested nodes: supervisor, researcher, analyst, writer, optional critic.
+        This milestone keeps orchestration explicit and deterministic. Later milestones can
+        replace this registry with a compiled LangGraph graph without changing agent internals.
         """
 
-        raise StudentTodoError("TODO(student): implement MultiAgentWorkflow.build")
+        return {
+            "supervisor": SupervisorAgent(),
+            "researcher": ResearcherAgent(),
+            "analyst": AnalystAgent(),
+            "writer": WriterAgent(),
+        }
 
     def run(self, state: ResearchState) -> ResearchState:
-        """Execute the graph and return final state.
+        """Execute supervisor routing and worker nodes until the workflow stops."""
 
-        TODO(student): Compile graph, invoke it, and convert result back to ResearchState.
-        """
-
-        raise StudentTodoError("TODO(student): implement MultiAgentWorkflow.run")
+        agents = self.build()
+        supervisor = agents["supervisor"]
+        while True:
+            state = supervisor.run(state)
+            route = state.route_history[-1]
+            if route == "done":
+                return state
+            worker = agents.get(route)
+            if worker is None:
+                raise AgentExecutionError(f"Supervisor returned unknown route: {route}")
+            try:
+                state = worker.run(state)
+            except StudentTodoError:
+                raise
+            except AgentExecutionError as exc:
+                state.errors.append(str(exc))
+                state.add_trace_event("agent_error", {"agent": route, "error": str(exc)})
